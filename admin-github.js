@@ -89,20 +89,22 @@
   function writeSeats(a, t) {
     seatsAvail = a; seatsTotal = t;
     $('seatAvail').textContent = a; $('seatTotal').textContent = t;
-    var job = seatQueue.then(function attempt() {
+    // One attempt: read the current file sha, then PUT with it.
+    function attempt() {
       return STORE.readSeatsAuth(getToken()).then(function (r) {
         seatsSha = r.sha;
         return STORE.writeSeats({ total: t, available: a, updatedAt: Date.now() }, seatsSha, getToken())
           .then(function (sha) { seatsSha = sha; return true; });
       });
-    }).catch(function (e) {
-      // Background retry on sha conflict or transient network error.
+    }
+    var job = seatQueue.then(attempt).catch(function (e) {
+      // Background retry on sha conflict or transient network error — never
+      // surfaces an error to the owner; UI already shows the latest value.
       var msg = (e && e.message) || '';
       if (/does not match|409|network|timeout|fetch|failed/i.test(msg)) {
         var tries = (e.__tries || 0) + 1;
-        if (tries < 6) { var ne = e; ne.__tries = tries; return Promise.resolve().then(attempt).catch(function (e2) { e2.__tries = tries; throw e2; }); }
+        if (tries < 6) { e.__tries = tries; return Promise.resolve().then(attempt).catch(function (e2) { e2.__tries = tries; throw e2; }); }
       }
-      // give up quietly — UI already shows the latest intended value
       return false;
     });
     seatQueue = job.catch(function () { return false; });
