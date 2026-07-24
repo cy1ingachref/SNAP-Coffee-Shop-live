@@ -79,7 +79,12 @@
   var menuItems = {}, editId = null, currentEditImg = null;
 
   function initDashboard() {
-    STORE.readSeats(getToken()).then(function (r) {
+    var token = getToken();
+    // Read via the authenticated API so we capture the file `sha` GitHub
+    // needs to accept a commit. (Public Pages read returns sha:null, which
+    // is what caused "sha wasn't supplied".) Fall back to showing current
+    // values if the read fails.
+    STORE.readSeatsAuth(token).then(function (r) {
       seatsSha = r.sha;
       var d = r.data || {};
       var total = (typeof d.total === 'number') ? d.total : 20;
@@ -88,11 +93,11 @@
       $('seatAvail').textContent = avail; $('seatTotal').textContent = total;
       $('seatTotalInput').value = total;
       if (d.updatedAt) $('seatUpdated').textContent = 'Updated ' + new Date(d.updatedAt).toLocaleTimeString();
-    }).catch(function () { toast('Could not load seats', true); });
+    }).catch(function () { toast('Could not load seats (check token/connection)', true); });
 
-    STORE.readMenu(getToken()).then(function (r) {
+    STORE.readMenuAuth(token).then(function (r) {
       menuSha = r.sha; menuItems = r.data || {}; renderMenuList();
-    }).catch(function () { toast('Could not load menu', true); });
+    }).catch(function () { toast('Could not load menu (check token/connection)', true); });
   }
 
   function writeSeats(avail, total) {

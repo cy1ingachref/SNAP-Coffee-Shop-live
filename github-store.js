@@ -45,20 +45,33 @@
 
   function writeFile(path, contentObj, message, token, prevSha) {
     if (!token) return Promise.reject(new Error("Token required to write."));
-    var body = {
-      message: message,
-      content: encodeBase64(JSON.stringify(contentObj, null, 2)),
-      branch: CFG.branch
-    };
-    if (prevSha) body.sha = prevSha;
-    return fetch(API + "/repos/" + CFG.repo + "/contents/" + path, {
-      method: "PUT",
-      headers: authHeaders(token),
-      body: JSON.stringify(body)
-    }).then(function (r) {
-      if (!r.ok) return r.json().then(function (e) { throw new Error(e.message || ("HTTP " + r.status)); });
-      return r.json();
-    }).then(function (j) { return j.commit ? j.commit.sha : (j.content && j.content.sha); });
+    function buildBody(sha) {
+      var b = {
+        message: message,
+        content: encodeBase64(JSON.stringify(contentObj, null, 2)),
+        branch: CFG.branch
+      };
+      if (sha) b.sha = sha;
+      return b;
+    }
+    // Retry once on 409: a PUT to an existing file without the current `sha`
+    // (or with a stale one) is rejected by GitHub. Re-read the latest `sha`
+    // and retry so a single click always succeeds.
+    function attempt(sha, depth) {
+      depth = depth || 0;
+      return fetch(API + "/repos/" + CFG.repo + "/contents/" + path, {
+        method: "PUT",
+        headers: authHeaders(token),
+        body: JSON.stringify(buildBody(sha))
+      }).then(function (r) {
+        if (r.ok) return r.json();
+        if (r.status === 409 && depth < 1) {
+          return readFile(path, token).then(function (f) { return attempt(f.sha, depth + 1); });
+        }
+        return r.json().then(function (e) { throw new Error(e.message || ("HTTP " + r.status)); });
+      });
+    }
+    return attempt(prevSha, 0).then(function (j) { return j.commit ? j.commit.sha : (j.content && j.content.sha); });
   }
 
   function encodeBase64(str) { return btoa(unescape(encodeURIComponent(str))); }
@@ -70,6 +83,10 @@
     // Customers: read same-origin Pages files (no token needed).
     readSeats: function () { return readPublic(CFG.folder + "/seats.json"); },
     readMenu: function () { return readPublic(CFG.folder + "/menu.json"); },
+    // Owner: read via the authenticated API so we get the file's `sha`,
+    // which GitHub requires to commit a change to an existing file.
+    readSeatsAuth: function (token) { return readFile(CFG.folder + "/seats.json", token); },
+    readMenuAuth: function (token) { return readFile(CFG.folder + "/menu.json", token); },
     // Owner writes: use provided token, else the embedded PAT.
     writeSeats: function (obj, sha, token) {
       return writeFile(CFG.folder + "/seats.json", obj, "SNAP: update available seats", token || EMBEDDED_PAT, sha);
