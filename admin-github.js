@@ -76,6 +76,8 @@
 
   /* ---- dashboard ---- */
   var seatsSha = null, menuSha = null;
+  var seatsAvail = 20, seatsTotal = 20; // authoritative state, updated optimistically on each click
+  var seatQueue = Promise.resolve();    // serializes seat writes so two PUTs never race
   var menuItems = {}, editId = null, currentEditImg = null;
 
   function initDashboard() {
@@ -90,6 +92,7 @@
       var total = (typeof d.total === 'number') ? d.total : 20;
       var avail = (typeof d.available === 'number') ? d.available : total;
       avail = Math.max(0, Math.min(avail, total));
+      seatsAvail = avail; seatsTotal = total;
       $('seatAvail').textContent = avail; $('seatTotal').textContent = total;
       $('seatTotalInput').value = total;
       if (d.updatedAt) $('seatUpdated').textContent = 'Updated ' + new Date(d.updatedAt).toLocaleTimeString();
@@ -100,26 +103,48 @@
     }).catch(function () { toast('Could not load menu (check token/connection)', true); });
   }
 
+  // Serialized, optimistic seat write. Prevents the GitHub 409
+  // ("...does not match <sha>") you get when clicking -/+ faster than the
+  // previous PUT resolves: only one write is ever in flight, and the
+  // displayed number + state are updated immediately so the next click
+  // builds on the correct value and actually accumulates.
   function writeSeats(avail, total) {
-    var payload = { total: total, available: avail, updatedAt: Date.now() };
-    STORE.writeSeats(payload, seatsSha, getToken()).then(function (sha) {
-      seatsSha = sha;
-      $('seatUpdated').textContent = 'Updated ' + new Date().toLocaleTimeString();
-      toast('Seats saved');
+    seatsAvail = avail; seatsTotal = total;
+    $('seatAvail').textContent = avail; $('seatTotal').textContent = total;
+    var job = seatQueue.then(function () {
+      return STORE.writeSeats({ total: total, available: avail, updatedAt: Date.now() }, seatsSha, getToken())
+        .then(function (sha) { seatsSha = sha; return true; })
+        .catch(function (e) {
+          // sha conflict: re-read the latest file sha and retry once.
+          if (/does not match|409/i.test((e && e.message) || '')) {
+            return STORE.readSeatsAuth(getToken()).then(function (r) {
+              seatsSha = r.sha;
+              return STORE.writeSeats({ total: total, available: avail, updatedAt: Date.now() }, seatsSha, getToken())
+                .then(function (sha2) { seatsSha = sha2; return true; });
+            });
+          }
+          throw e;
+        });
+    });
+    // keep the chain alive even if a write fails, so future writes still queue
+    seatQueue = job.catch(function () { return false; });
+    job.then(function (ok) {
+      if (ok) {
+        $('seatUpdated').textContent = 'Updated ' + new Date().toLocaleTimeString();
+        toast('Seats saved');
+      }
     }).catch(function (e) { writeErr(e); });
   }
   $('seatMinus').addEventListener('click', function () {
-    var a = +$('seatAvail').textContent || 0, t = +$('seatTotal').textContent || 0;
-    writeSeats(Math.max(0, a - 1), t);
+    writeSeats(Math.max(0, seatsAvail - 1), seatsTotal);
   });
   $('seatPlus').addEventListener('click', function () {
-    var a = +$('seatAvail').textContent || 0, t = +$('seatTotal').textContent || 0;
-    writeSeats(Math.min(t, a + 1), t);
+    writeSeats(Math.min(seatsTotal, seatsAvail + 1), seatsTotal);
   });
   $('seatSave').addEventListener('click', function () {
-    var t = Math.max(0, +$('seatTotalInput').value || 0);
-    var a = Math.min(+$('seatAvail').textContent || 0, t);
-    writeSeats(a, t);
+    seatsTotal = Math.max(0, +$('seatTotalInput').value || 0);
+    seatsAvail = Math.min(seatsAvail, seatsTotal);
+    writeSeats(seatsAvail, seatsTotal);
   });
 
   function renderMenuList() {
