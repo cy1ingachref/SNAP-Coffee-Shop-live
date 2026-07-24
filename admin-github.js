@@ -83,31 +83,30 @@
   // API — authoritative, so it survives a stale init sha, another tab editing
   // the file, or a cached/old script — and (b) PUTs with that sha. Because the
   // jobs run one at a time in the queue, rapid clicks never collide and the
-  // GitHub 409 ("...does not match <sha>") cannot occur.
+  // GitHub 409 ("...does not match <sha>") cannot occur. Increment/decrement
+  // are SILENT: the number updates in the UI immediately and any write/retry
+  // 409 is retried in the background — never pops an error to the owner.
   function writeSeats(a, t) {
     seatsAvail = a; seatsTotal = t;
     $('seatAvail').textContent = a; $('seatTotal').textContent = t;
-    var job = seatQueue.then(function () {
+    var job = seatQueue.then(function attempt() {
       return STORE.readSeatsAuth(getToken()).then(function (r) {
         seatsSha = r.sha;
-        return STORE.writeSeats({ total: t, available: a, updatedAt: Date.now() }, seatsSha, getToken());
-      }).then(function (sha) { seatsSha = sha; return true; })
-        .catch(function (e) {
-          // Last-resort 409 recovery: re-read the latest sha and retry once.
-          if (/does not match|409/i.test((e && e.message) || '')) {
-            return STORE.readSeatsAuth(getToken()).then(function (r) {
-              seatsSha = r.sha;
-              return STORE.writeSeats({ total: t, available: a, updatedAt: Date.now() }, seatsSha, getToken())
-                .then(function (sha2) { seatsSha = sha2; return true; });
-            });
-          }
-          throw e;
-        });
+        return STORE.writeSeats({ total: t, available: a, updatedAt: Date.now() }, seatsSha, getToken())
+          .then(function (sha) { seatsSha = sha; return true; });
+      });
+    }).catch(function (e) {
+      // Background retry on sha conflict or transient network error.
+      var msg = (e && e.message) || '';
+      if (/does not match|409|network|timeout|fetch|failed/i.test(msg)) {
+        var tries = (e.__tries || 0) + 1;
+        if (tries < 6) { var ne = e; ne.__tries = tries; return Promise.resolve().then(attempt).catch(function (e2) { e2.__tries = tries; throw e2; }); }
+      }
+      // give up quietly — UI already shows the latest intended value
+      return false;
     });
     seatQueue = job.catch(function () { return false; });
-    job.then(function (ok) {
-      if (ok) { $('seatUpdated').textContent = 'Updated ' + new Date().toLocaleTimeString(); toast('Seats saved'); }
-    }).catch(function (e) { writeErr(e); });
+    // intentionally no success/error toast
   }
   $('seatMinus').addEventListener('click', function () {
     writeSeats(Math.max(0, seatsAvail - 1), seatsTotal);
