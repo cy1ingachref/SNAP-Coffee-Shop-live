@@ -43,7 +43,17 @@
       try { localStorage.setItem(TOKEN_KEY, token); } catch (e) {}
       loggedIn = true;
       hide(loginView); show($('dashView')); initDashboard();
-    }).catch(function (err) { showLoginErr(err.message || 'Token rejected by GitHub.'); });
+    }).catch(function (err) {
+      var m = (err && err.message) ? err.message : '';
+      if (!m || /Failed to fetch|NetworkError|load failed/i.test(m)) {
+        m = 'Could not reach GitHub. Check your connection, and that this page is served over HTTPS.';
+      } else if (/401|Unauthorized/i.test(m)) {
+        m = 'Token rejected by GitHub (401). It may be wrong or revoked.';
+      } else if (/403|Resource not accessible/i.test(m)) {
+        m = 'Token lacks access to SNAP-Coffee-Shop-live. Ensure it is fine-grained, scoped to that repo, Contents: Read and write.';
+      }
+      showLoginErr(m);
+    });
   }
   $('loginForm').addEventListener('submit', function (e) { e.preventDefault(); tryUnlock(); });
   function showLoginErr(m) { var el = $('loginError'); el.textContent = m; show(el); }
