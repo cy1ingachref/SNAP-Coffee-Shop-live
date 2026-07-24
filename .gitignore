@@ -1,0 +1,11 @@
+# OS / editor junk
+Thumbs.db
+Desktop.ini
+.DS_Store
+~$*
+*.tmp
+
+# local scratch / verification scripts
+hermes-verify*.js
+verify*.js
+*.verify

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'sha256-dNdlBplWR5bDZDI+YCKolkPPL27/gS/a7SNuPT2Lg0A='; connect-src 'self' https://api.github.com; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; form-action 'self'" />
+  <title data-i18n="meta.title">SNAP Coffee — Artisan Coffee &amp; Fresh Bites · Ariana, Tunis</title>
+  <meta name="description" data-i18n="meta.desc" content="SNAP Coffee in Ariana (Les Jardins de Babylon) — single-origin coffee, in-house pastries and a calm space for students and remote workers. Open until midnight. Rated 4.3 on Google." />
+  <link rel="icon" href="favicon.ico" sizes="any" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" sizes="180x180" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@300;400;500;600&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <script>document.documentElement.classList.replace('no-js','js');</script>
+</head>
+<body>
+  <!-- ===== Header ===== -->
+  <header class="site-header" id="header">
+    <div class="container nav">
+      <a class="brand" href="#top" aria-label="SNAP Coffee home">
+        <img class="brand-logo" src="images/snap-logo.jpg" alt="SNAP Coffee" />
+        <span class="brand-mark">SNAP</span>
+        <span class="brand-sub" data-i18n="brand.sub">coffee</span>
+      </a>
+      <div class="lang-switch" role="group" aria-label="Language">
+        <button class="lang-btn active" data-lang="en" type="button">EN</button>
+        <button class="lang-btn" data-lang="fr" type="button">FR</button>
+        <button class="lang-btn" data-lang="ar" type="button">AR</button>
+      </div>
+      <button class="nav-toggle" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <div class="nav-backdrop" id="navBackdrop" hidden></div>
+
+  <!-- ===== Hero ===== -->
+  <section class="hero" id="top">
+    <div class="hero-bg"></div>
+    <div class="container hero-inner">
+      <div class="hero-copy">
+        <p class="eyebrow" data-i18n="hero.eyebrow">Ariana · Les Jardins de Babylon</p>
+        <h1 data-i18n="hero.title">Slow mornings,<br><em>bright</em> cups.</h1>
+        <p class="hero-lead" data-i18n="hero.lead">A neighbourhood café where every cup is pulled with care — for students, remote workers, and anyone who likes their coffee made well.</p>
+        <ul class="hero-points">
+          <li data-i18n="hero.point1">Single-origin beans, ground to order</li>
+          <li data-i18n="hero.point2">Pastries baked fresh each morning</li>
+          <li data-i18n="hero.point3">A quiet corner to study &amp; meet</li>
+        </ul>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="#menu" data-i18n="hero.cta1">Explore the menu</a>
+          <a class="btn btn-ghost" href="#visit" data-i18n="hero.cta2">Find us</a>
+        </div>
+        <div class="avail-card" id="availCard" aria-live="polite">
+          <div class="avail-rail"><span class="avail-fill" id="availFill"></span></div>
+          <div class="avail-row">
+            <span class="avail-num"><span id="availNum">20</span><span class="avail-slash">/</span><span id="availTotal">20</span></span>
+            <span class="avail-label" id="availLabel">Seats free — drop by!</span>
+          </div>
+          <span class="avail-time" id="availUpdated"></span>
+        </div>
+      </div>
+      <div class="hero-art">
+        <img class="float-cup" src="images/cappuccino.jpg" alt="A freshly brewed coffee at SNAP Coffee" />
+        <div class="hero-ring"></div>
+      </div>
+    </div>
+    <a class="scroll-cue" href="#menu" aria-label="Scroll down"><span></span></a>
+  </section>
+
+  <!-- ===== Menu ===== -->
+  <section class="menu" id="menu" data-reveal>
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-i18n="menu.eyebrow">From the bar &amp; the kitchen</p>
+        <h2 data-i18n="menu.title">The Menu</h2>
+        <p class="section-sub" data-i18n="menu.sub">Simple, fresh, made to order</p>
+      </div>
+
+      <div class="menu-tabs" role="tablist" aria-label="Menu categories">
+        <button class="menu-tab active" data-cat="all" role="tab" data-i18n="menu.tab_all">All</button>
+        <button class="menu-tab" data-cat="coffee" role="tab" data-i18n="menu.tab_coffee">Coffee &amp; Drinks</button>
+        <button class="menu-tab" data-cat="food" role="tab" data-i18n="menu.tab_food">Food &amp; Bites</button>
+        <button class="menu-tab" data-cat="breakfast" role="tab" data-i18n="menu.tab_breakfast">Petit Déj</button>
+      </div>
+
+      <div class="menu-grid">
+        <article class="dish" data-cat="coffee">
+          <div class="dish-img"><img src="images/espresso.jpg" alt="Espresso" loading="lazy" /></div>
+          <div class="dish-body">
+            <div class="dish-badge hot" data-i18n="badge.best">Best seller</div>
+            <h3 class="dish-name" data-i18n="dish.espresso.name">Espresso</h3>
+            <p class="dish-desc" data-i18n="dish.espresso.desc">A short, intense shot with a caramel crema.</p>
+            <span class="dish-price">2.5</span>
+          </div>
+        </article>
+        <article class="dish" data-cat="coffee">
+          <div class="dish-img"><img src="images/cappuccino.jpg" alt="Cappuccino" loading="lazy" /></div>
+          <div class="dish-body">
+            <h3 class="dish-name" data-i18n="dish.cappuccino.name">Cappuccino</h3>
+            <p class="dish-desc" data-i18n="dish.cappuccino.desc">Equal parts espresso, steamed milk and micro-foam.</p>
+            <span class="dish-price">3</span>
+          </div>
+        </article>
+        <article class="dish" data-cat="coffee">
+          <div class="dish-img"><img src="images/drink.jpg" alt="Signature Drink" loading="lazy" /></div>
+          <div class="dish-body">
+            <div class="dish-badge new" data-i18n="badge.new">New</div>
+            <h3 class="dish-name" data-i18n="dish.drink.name">Signature Drink</h3>
+            <p class="dish-desc" data-i18n="dish.drink.desc">Our house blend, sweet and refreshing.</p>
+            <span class="dish-price">5</span>
+          </div>
+        </article>
+        <article class="dish" data-cat="food">
+          <div class="dish-img"><img src="images/croissant.jpg" alt="Butter Croissant" loading="lazy" /></div>
+          <div class="dish-body">
+            <h3 class="dish-name" data-i18n="dish.croissant.name">Butter Croissant</h3>
+            <p class="dish-desc" data-i18n="dish.croissant.desc">Laminated, flaky, baked at dawn.</p>
+            <span class="dish-price">2</span>
+          </div>
+        </article>
+        <article class="dish" data-cat="food">
+          <div class="dish-img"><img src="images/sandwich-jambon-fromage.jpg" alt="Ham &amp; Cheese Sandwich" loading="lazy" /></div>
+          <div class="dish-body">
+            <div class="dish-badge hot" data-i18n="badge.best">Best seller</div>
+            <h3 class="dish-name" data-i18n="dish.sandwich.name">Ham &amp; Cheese Sandwich</h3>
+            <p class="dish-desc" data-i18n="dish.sandwich.desc">Toasted baguette with ham, melted cheese, lettuce &amp; tomato, herb aioli. Served with fries, side salad &amp; sauce.</p>
+            <span class="dish-price">7</span>
+          </div>
+        </article>
+        <article class="dish" data-cat="food">
+          <div class="dish-img"><img src="images/sandwich-thai-poulet.jpg" alt="Thai Chicken Sandwich" loading="lazy" /></div>
+          <div class="dish-body">
+            <h3 class="dish-name" data-i18n="dish.thai.name">Thai Chicken Sandwich</h3>
+            <p class="dish-desc" data-i18n="dish.thai.desc">Chicken with a Thai-style spicy-sweet dressing.</p>
+            <span class="dish-price">11</span>
+          </div>
+        </article>
+        <article class="dish" data-cat="food">
+          <div class="dish-img"><img src="images/crepe-jambon-fromage.jpg" alt="Ham &amp; Cheese Crêpe" loading="lazy" /></div>
+          <div class="dish-body">
+            <h3 class="dish-name" data-i18n="dish.crepe.name">Ham &amp; Cheese Crêpe</h3>
+            <p class="dish-desc" data-i18n="dish.crepe.desc">Soft crêpe folded around ham and cheese.</p>
+            <span class="dish-price">8</span>
+          </div>
+        </article>
+        <article class="dish" data-cat="food">
+          <div class="dish-img"><img src="images/crepe-sale.jpg" alt="Savory Crêpe" loading="lazy" /></div>
+          <div class="dish-body">
+            <h3 class="dish-name" data-i18n="dish.csep.name">Savory Crêpe</h3>
+            <p class="dish-desc" data-i18n="dish.csep.desc">Filled with fresh vegetables and cheese.</p>
+            <span class="dish-price">8</span>
+          </div>
+        </article>
+        <article class="dish" data-cat="food">
+          <div class="dish-img"><img src="images/snaps-waffle.jpg" alt="Waffle" loading="lazy" /></div>
+          <div class="dish-body">
+            <h3 class="dish-name" data-i18n="dish.waffle.name">Waffle</h3>
+            <p class="dish-desc" data-i18n="dish.waffle.desc">Crisp waffle, dusted with sugar.</p>
+            <span class="dish-price">6</span>
+          </div>
+        </article>
+        <article class="dish" data-cat="food">
+          <div class="dish-img"><img src="images/waffles.png" alt="Belgian Waffle" loading="lazy" /></div>
+          <div class="dish-body">
+            <h3 class="dish-name" data-i18n="dish.belgian.name">Belgian Waffle</h3>
+            <p class="dish-desc" data-i18n="dish.belgian.desc">Thick, golden waffle with your favourite topping.</p>
+            <span class="dish-price">10</span>
+          </div>
+        </article>
+        <article class="dish" data-cat="food">
+          <div class="dish-img"><img src="images/banana-waffle.png" alt="Banana Waffle" loading="lazy" /></div>
+          <div class="dish-body">
+            <div class="dish-badge new" data-i18n="badge.new">New</div>
+            <h3 class="dish-name" data-i18n="dish.banana.name">Banana Waffle</h3>
+            <p class="dish-desc" data-i18n="dish.banana.desc">Warm waffle, fresh banana, milk-chocolate drizzle &amp; biscuit crumble, whipped cream.</p>
+            <span class="dish-price">12</span>
+          </div>
+        </article>
+        <article class="dish" data-cat="food">
+          <div class="dish-img"><img src="images/oreo-waffle.jpg" alt="Oreo Waffle" loading="lazy" /></div>
+          <div class="dish-body">
+            <div class="dish-badge new" data-i18n="badge.new">New</div>
+            <h3 class="dish-name" data-i18n="dish.oreo.name">Oreo Waffle</h3>
+            <p class="dish-desc" data-i18n="dish.oreo.desc">Belgian waffle, dark-chocolate sauce, crushed Oreo, cream &amp; mint.</p>
+            <span class="dish-price">13</span>
+          </div>
+        </article>
+        <article class="dish" data-cat="food">
+          <div class="dish-img"><img src="images/waffle-almond-chocolate.jpg" alt="Almond &amp; Chocolate Waffle" loading="lazy" /></div>
+          <div class="dish-body">
+            <div class="dish-badge new" data-i18n="badge.new">New</div>
+            <h3 class="dish-name" data-i18n="dish.almond.name">Almond &amp; Chocolate Waffle</h3>
+            <p class="dish-desc" data-i18n="dish.almond.desc">Roasted almonds, milk-chocolate drizzle, cocoa dusting, with mousse &amp; vanilla ice cream.</p>
+            <span class="dish-price">14</span>
+          </div>
+        </article>
+        <article class="dish" data-cat="breakfast">
+          <div class="dish-img"><img src="images/petit-dej-1p.png" alt="Petit Déjeuner 1 personne" loading="lazy" /></div>
+          <div class="dish-body">
+            <div class="dish-badge hot" data-i18n="badge.best">Best seller</div>
+            <h3 class="dish-name" data-i18n="dish.pdj1.name">Petit Déj — 1 Person</h3>
+            <p class="dish-desc" data-i18n="dish.pdj1.desc">Coffee or café crème, mineral water, milk, chocolate crepe, croissant, sliced baguette &amp; a trio of spreads (butter, chocolate, apricot jam).</p>
+            <span class="dish-price">18</span>
+          </div>
+        </article>
+        <article class="dish" data-cat="breakfast">
+          <div class="dish-img"><img src="images/petit-dej-2p.png" alt="Petit Déjeuner 2 personnes" loading="lazy" /></div>
+          <div class="dish-body">
+            <h3 class="dish-name" data-i18n="dish.pdj2.name">Petit Déj — 2 Persons</h3>
+            <p class="dish-desc" data-i18n="dish.pdj2.desc">For two: fresh orange juice &amp; espresso, sweet chocolate crepe, savory ham &amp; cheese galette, toast, scrambled eggs, green salad &amp; tomato.</p>
+            <span class="dish-price">32</span>
+          </div>
+        </article>
+        <article class="dish" data-cat="breakfast">
+          <div class="dish-img"><img src="images/petit-dej-tunisien.jpg" alt="Petit Déjeuner Tunisien" loading="lazy" /></div>
+          <div class="dish-body">
+            <div class="dish-badge new" data-i18n="badge.local">Local</div>
+            <h3 class="dish-name" data-i18n="dish.pdjt.name">Petit Déj Tunisien</h3>
+            <p class="dish-desc" data-i18n="dish.pdjt.desc">Msemen &amp; pastry, fried egg, salad (lettuce, tomato, cucumber, orange), harissa, labneh, olive oil, honey &amp; coffee.</p>
+            <span class="dish-price">20</span>
+          </div>
+        </article>
+      </div>
+      <p class="menu-foot" data-i18n="menu.foot">Prices are indicative — ask in-store for the day's specials.</p>
+    </div>
+  </section>
+
+  <!-- ===== Reviews ===== -->
+  <section class="reviews" id="reviews" data-reveal>
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-i18n="reviews.eyebrow">Loved locally</p>
+        <h2 data-i18n="reviews.title">What people say</h2>
+      </div>
+      <div class="rating-banner">
+        <div class="rating-score">
+          <span class="score" data-target="4.3">0.0</span>
+          <div class="stars" aria-label="4.3 out of 5 stars">
+            <span class="star filled">★</span><span class="star filled">★</span><span class="star filled">★</span><span class="star filled">★</span><span class="star half">★</span>
+          </div>
+          <span class="review-count"><span data-i18n="reviews.from">from</span> <span class="num" data-target="26">0</span> <span data-i18n="reviews.google">Google reviews</span></span>
+        </div>
+      </div>
+      <div class="review-grid">
+        <blockquote class="review">
+          <p data-i18n="reviews.r1">"Best study spot around. The Wi-Fi is solid and the latte is always on point."</p>
+          <footer>— <strong>Youssef</strong>, <span data-i18n="reviews.regular">regular</span></footer>
+        </blockquote>
+        <blockquote class="review">
+          <p data-i18n="reviews.r2">"Their sandwich is unreal for the price. I come here every lunch break."</p>
+          <footer>— <strong>Amira</strong>, <span data-i18n="reviews.worker">nearby worker</span></footer>
+        </blockquote>
+        <blockquote class="review">
+          <p data-i18n="reviews.r3">"Cozy, quiet, friendly. Feels like a second living room during exam season."</p>
+          <footer>— <strong>Sarah</strong>, <span data-i18n="reviews.student">student</span></footer>
+        </blockquote>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Visit / Contact ===== -->
+  <section class="visit" id="visit" data-reveal>
+    <div class="container visit-inner">
+      <div class="visit-text">
+        <p class="eyebrow" data-i18n="visit.eyebrow">Come say hi</p>
+        <h2 data-i18n="visit.title">Visit SNAP</h2>
+        <ul class="visit-list">
+          <li><span class="v-label" data-i18n="visit.where">Where</span> Résidence Les Jardins de Babylon, Ariana 2037</li>
+          <li><span class="v-label" data-i18n="visit.call">Call</span> <a href="tel:+21658741510">58 741 510</a></li>
+          <li><span class="v-label" data-i18n="visit.hours">Hours</span> <span data-i18n="visit.hours_val">Open daily · until 12:00 AM</span></li>
+          <li><span class="v-label" data-i18n="visit.price">Price</span> 1–20 TND</li>
+          <li><span class="v-label" data-i18n="visit.find">Find</span> <a href="https://maps.app.goo.gl/44mZ8596GpoQqrAm7" target="_blank" rel="noopener" data-i18n="visit.maps">View on Google Maps</a></li>
+        </ul>
+        <a class="btn btn-primary" href="https://wa.me/21658741510" target="_blank" rel="noopener" data-i18n="visit.whatsapp">Message us on WhatsApp</a>
+      </div>
+      <div class="visit-map">
+        <a class="map-placeholder" href="https://maps.app.goo.gl/44mZ8596GpoQqrAm7" target="_blank" rel="noopener" aria-label="Open SNAP Coffee Shop in Google Maps">
+          <span data-i18n="visit.maps">View on Google Maps</span>
+          <small data-i18n="visit.tap">Tap to open · Les Jardins de Babylon, Ariana 2037</small>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Footer ===== -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span class="brand-logo"><img class="brand-logo-img" src="images/snap-logo.jpg" alt="SNAP Coffee" /></span>
+      <p>© <span id="year"></span> <span data-i18n="footer.copy">SNAP Coffee · Ariana, Tunis</span></p>
+      <a class="owner-link" href="admin.html">Owner sign-in</a>
+      <a class="to-top" href="#top" aria-label="Back to top">↑</a>
+    </div>
+  </footer>
+
+  <!-- ===== Lightbox ===== -->
+  <div class="lightbox" role="dialog" aria-modal="true" aria-label="Photo viewer">
+    <button class="lb-close" aria-label="Close">×</button>
+    <button class="lb-prev" aria-label="Previous">‹</button>
+    <figure class="lb-fig"><img src="" alt="" /><figcaption class="lb-cap"></figcaption></figure>
+    <button class="lb-next" aria-label="Next">›</button>
+  </div>
+
+  <!-- ===== Mobile nav (body-level so fixed positioning is never trapped by header blur) ===== -->
+  <nav class="nav-links" id="navLinks" aria-label="Mobile menu">
+    <a href="#menu" data-i18n="nav.menu">Menu</a>
+    <a href="#reviews" data-i18n="nav.reviews">Reviews</a>
+    <a href="#visit" data-i18n="nav.visit">Visit</a>
+  </nav>
+  <div class="nav-backdrop" id="navBackdrop" hidden></div>
+
+  <!-- ===== GitHub storage (live seats + live menu, no backend) ===== -->
+  <script src="github-config.js"></script>
+  <script src="github-token.js"></script>
+  <script src="github-store.js"></script>
+  <script src="customer-github.js"></script>
+
+  <script src="script.js"></script>
+</body>
+</html>

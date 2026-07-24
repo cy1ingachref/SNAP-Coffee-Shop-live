@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' https://www.gstatic.com; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app https://securetoken.googleapis.com https://www.googleapis.com https://identitytoolkit.googleapis.com; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; form-action 'self'" />
+  <title>SNAP Coffee — Admin</title>
+  <link rel="icon" href="favicon.ico" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body class="admin-body">
+  <!-- ===== Login ===== -->
+  <section id="loginView" class="admin-login">
+    <div class="login-card">
+      <img class="login-logo" src="images/snap-logo.jpg" alt="SNAP Coffee" />
+      <h1>SNAP Admin</h1>
+      <p class="login-sub">Manage seats &amp; menu</p>
+
+      <form id="loginForm" class="admin-form" autocomplete="off">
+        <label>Username
+          <input type="text" id="loginUser" required placeholder="adminsnap" autocomplete="username" />
+        </label>
+        <label>Password
+          <input type="password" id="loginPw" required placeholder="••••••••" autocomplete="current-password" />
+        </label>
+        <label>GitHub token (PAT)
+          <input type="password" id="loginToken" required placeholder="ghp_… or github_pat_…" />
+        </label>
+        <button type="submit" class="btn-admin primary">Sign in</button>
+      </form>
+
+      <p id="loginError" class="admin-error" hidden></p>
+      <p class="admin-note">Username + password is the owner gate. The GitHub token (needs <b>repo</b> scope) is what actually writes to the site. See SETUP.md.</p>
+    </div>
+  </section>
+
+  <!-- ===== Dashboard ===== -->
+  <main id="dashView" class="admin-dash hidden">
+    <header class="admin-top">
+      <div class="admin-brand"><span>SNAP</span> Admin</div>
+      <div class="admin-top-right">
+        <span id="syncStatus" class="sync-dot" title="Sync status">●</span>
+        <span id="ownerEmail" class="owner-email"></span>
+        <button id="logoutBtn" type="button" class="btn-admin ghost">Log out</button>
+      </div>
+    </header>
+
+    <div class="admin-grid">
+      <!-- Seats -->
+      <section class="panel">
+        <h2>Available places</h2>
+        <p class="panel-sub">Tap − / + to update the live counter customers see.</p>
+        <div class="seats-box">
+          <button id="seatMinus" class="seat-btn" type="button" aria-label="Decrease">−</button>
+          <div class="seats-num"><span id="seatAvail">20</span><span class="seats-slash">/</span><span id="seatTotal">20</span></div>
+          <button id="seatPlus" class="seat-btn" type="button" aria-label="Increase">+</button>
+        </div>
+        <div class="seats-meta">
+          <label class="inline">Total seats
+            <input type="number" id="seatTotalInput" min="0" max="500" value="20" />
+          </label>
+          <button id="seatSave" class="btn-admin primary" type="button">Save</button>
+        </div>
+        <p id="seatUpdated" class="seats-updated"></p>
+      </section>
+
+      <!-- Menu -->
+      <section class="panel wide">
+        <div class="panel-head">
+          <h2>Menu</h2>
+          <div>
+            <button id="importMenu" class="btn-admin ghost" type="button">Import current site menu</button>
+          </div>
+        </div>
+
+        <form id="menuForm" class="menu-form" autocomplete="off">
+          <input type="hidden" id="menuId" />
+          <div class="mf-row">
+            <label class="grow">Name<input type="text" id="menuName" required placeholder="Cappuccino" /></label>
+            <label>Category
+              <select id="menuCat">
+                <option value="coffee">Coffee &amp; Drinks</option>
+                <option value="food">Food &amp; Bites</option>
+                <option value="breakfast">Petit Déj</option>
+              </select>
+            </label>
+            <label>Price (TND)<input type="number" id="menuPrice" min="0" step="0.5" placeholder="3" /></label>
+          </div>
+          <label>Description<textarea id="menuDesc" rows="2" placeholder="A short, tasty description…"></textarea></label>
+          <div class="mf-row">
+            <label>Badge
+              <select id="menuBadge">
+                <option value="">None</option>
+                <option value="best">Best seller</option>
+                <option value="new">New</option>
+                <option value="local">Local</option>
+              </select>
+            </label>
+            <label class="grow">Photo
+              <input type="file" id="menuImg" accept="image/*" />
+            </label>
+          </div>
+          <div id="imgPreview" class="img-preview hidden"><img id="imgPreviewImg" alt="preview" /></div>
+          <div class="mf-actions">
+            <button type="submit" class="btn-admin primary" id="menuSubmit">Add item</button>
+            <button type="button" class="btn-admin ghost hidden" id="menuCancel">Cancel</button>
+          </div>
+        </form>
+
+        <ul id="menuList" class="menu-list"></ul>
+      </section>
+    </div>
+  </main>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <!-- GitHub-storage layer (no backend) -->
+  <script src="github-config.js"></script>
+  <script src="github-token.js"></script>
+  <script src="github-store.js"></script>
+  <script src="admin-github.js"></script>
+</body>
+</html>

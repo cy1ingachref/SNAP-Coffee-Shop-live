@@ -1,0 +1,146 @@
+{
+  "imp_0": {
+    "name": "Espresso",
+    "cat": "coffee",
+    "price": 2.5,
+    "desc": "A short, intense shot with a caramel crema.",
+    "badge": "best",
+    "img": "images/espresso.jpg",
+    "order": 0
+  },
+  "imp_1": {
+    "name": "Cappuccino",
+    "cat": "coffee",
+    "price": 3.0,
+    "desc": "Equal parts espresso, steamed milk and micro-foam.",
+    "badge": "",
+    "img": "images/cappuccino.jpg",
+    "order": 1
+  },
+  "imp_2": {
+    "name": "Signature Drink",
+    "cat": "coffee",
+    "price": 5.0,
+    "desc": "Our house blend, sweet and refreshing.",
+    "badge": "new",
+    "img": "images/drink.jpg",
+    "order": 2
+  },
+  "imp_3": {
+    "name": "Butter Croissant",
+    "cat": "food",
+    "price": 2.0,
+    "desc": "Laminated, flaky, baked at dawn.",
+    "badge": "",
+    "img": "images/croissant.jpg",
+    "order": 3
+  },
+  "imp_4": {
+    "name": "Ham &amp; Cheese Sandwich",
+    "cat": "food",
+    "price": 7.0,
+    "desc": "Toasted baguette with ham, melted cheese, lettuce &amp; tomato, herb aioli. Served with fries, side salad &amp; sauce.",
+    "badge": "best",
+    "img": "images/sandwich-jambon-fromage.jpg",
+    "order": 4
+  },
+  "imp_5": {
+    "name": "Thai Chicken Sandwich",
+    "cat": "food",
+    "price": 11.0,
+    "desc": "Chicken with a Thai-style spicy-sweet dressing.",
+    "badge": "",
+    "img": "images/sandwich-thai-poulet.jpg",
+    "order": 5
+  },
+  "imp_6": {
+    "name": "Ham &amp; Cheese Crêpe",
+    "cat": "food",
+    "price": 8.0,
+    "desc": "Soft crêpe folded around ham and cheese.",
+    "badge": "",
+    "img": "images/crepe-jambon-fromage.jpg",
+    "order": 6
+  },
+  "imp_7": {
+    "name": "Savory Crêpe",
+    "cat": "food",
+    "price": 8.0,
+    "desc": "Filled with fresh vegetables and cheese.",
+    "badge": "",
+    "img": "images/crepe-sale.jpg",
+    "order": 7
+  },
+  "imp_8": {
+    "name": "Waffle",
+    "cat": "food",
+    "price": 6.0,
+    "desc": "Crisp waffle, dusted with sugar.",
+    "badge": "",
+    "img": "images/snaps-waffle.jpg",
+    "order": 8
+  },
+  "imp_9": {
+    "name": "Belgian Waffle",
+    "cat": "food",
+    "price": 10.0,
+    "desc": "Thick, golden waffle with your favourite topping.",
+    "badge": "",
+    "img": "images/waffles.png",
+    "order": 9
+  },
+  "imp_10": {
+    "name": "Banana Waffle",
+    "cat": "food",
+    "price": 12.0,
+    "desc": "Warm waffle, fresh banana, milk-chocolate drizzle &amp; biscuit crumble, whipped cream.",
+    "badge": "new",
+    "img": "images/banana-waffle.png",
+    "order": 10
+  },
+  "imp_11": {
+    "name": "Oreo Waffle",
+    "cat": "food",
+    "price": 13.0,
+    "desc": "Belgian waffle, dark-chocolate sauce, crushed Oreo, cream &amp; mint.",
+    "badge": "new",
+    "img": "images/oreo-waffle.jpg",
+    "order": 11
+  },
+  "imp_12": {
+    "name": "Almond &amp; Chocolate Waffle",
+    "cat": "food",
+    "price": 14.0,
+    "desc": "Roasted almonds, milk-chocolate drizzle, cocoa dusting, with mousse &amp; vanilla ice cream.",
+    "badge": "new",
+    "img": "images/waffle-almond-chocolate.jpg",
+    "order": 12
+  },
+  "imp_13": {
+    "name": "Petit Déj — 1 Person",
+    "cat": "breakfast",
+    "price": 18.0,
+    "desc": "Coffee or café crème, mineral water, milk, chocolate crepe, croissant, sliced baguette &amp; a trio of spreads (butter, chocolate, apricot jam).",
+    "badge": "best",
+    "img": "images/petit-dej-1p.png",
+    "order": 13
+  },
+  "imp_14": {
+    "name": "Petit Déj — 2 Persons",
+    "cat": "breakfast",
+    "price": 32.0,
+    "desc": "For two: fresh orange juice &amp; espresso, sweet chocolate crepe, savory ham &amp; cheese galette, toast, scrambled eggs, green salad &amp; tomato.",
+    "badge": "",
+    "img": "images/petit-dej-2p.png",
+    "order": 14
+  },
+  "imp_15": {
+    "name": "Petit Déj Tunisien",
+    "cat": "breakfast",
+    "price": 20.0,
+    "desc": "Msemen &amp; pastry, fried egg, salad (lettuce, tomato, cucumber, orange), harissa, labneh, olive oil, honey &amp; coffee.",
+    "badge": "local",
+    "img": "images/petit-dej-tunisien.jpg",
+    "order": 15
+  }
+}
