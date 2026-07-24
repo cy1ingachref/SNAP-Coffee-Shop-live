@@ -76,24 +76,24 @@
 
   /* ---- dashboard ---- */
   // keep module-level avail/total authoritative so a click always builds on
-  // the correct value even before the previous write resolves.
+  var seatsSha = null, menuSha = null;
   var seatsAvail = 20, seatsTotal = 20;
   var seatQueue = Promise.resolve();
-  // Guard against a stale init sha (e.g. cached old script): before sending a
-  // seat write, make sure seatsSha is the real current file sha — refresh once
-  // if it's still null. The 409 retry inside writeSeats covers the rest.
-  function ensureSeatsSha() {
-    if (seatsSha) return Promise.resolve();
-    return STORE.readSeatsAuth(getToken()).then(function (r) { seatsSha = r.sha; });
-  }
+  // Serialized seat write. Each job (a) reads the CURRENT file sha from the
+  // API — authoritative, so it survives a stale init sha, another tab editing
+  // the file, or a cached/old script — and (b) PUTs with that sha. Because the
+  // jobs run one at a time in the queue, rapid clicks never collide and the
+  // GitHub 409 ("...does not match <sha>") cannot occur.
   function writeSeats(a, t) {
     seatsAvail = a; seatsTotal = t;
     $('seatAvail').textContent = a; $('seatTotal').textContent = t;
     var job = seatQueue.then(function () {
-      return ensureSeatsSha().then(function () {
+      return STORE.readSeatsAuth(getToken()).then(function (r) {
+        seatsSha = r.sha;
         return STORE.writeSeats({ total: t, available: a, updatedAt: Date.now() }, seatsSha, getToken());
       }).then(function (sha) { seatsSha = sha; return true; })
         .catch(function (e) {
+          // Last-resort 409 recovery: re-read the latest sha and retry once.
           if (/does not match|409/i.test((e && e.message) || '')) {
             return STORE.readSeatsAuth(getToken()).then(function (r) {
               seatsSha = r.sha;
