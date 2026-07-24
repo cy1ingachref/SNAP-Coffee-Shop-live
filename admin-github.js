@@ -1,7 +1,7 @@
 /* =====================================================================
  * SNAP Coffee — Admin dashboard (GitHub-stored, owner-only)
- * Login = GitHub Personal Access Token (PAT) + an owner password
- * (so the token isn't usable by just anyone who opens the page).
+ * Login = GitHub fine-grained PAT (scoped to SNAP-Coffee-Shop-live,
+ * Contents: Read and write). The token is saved only in this browser.
  * Writes seats + menu JSON files to the repo via the GitHub API.
  * ===================================================================== */
 (function () {
@@ -27,22 +27,17 @@
     clearTimeout(toastTimer); toastTimer = setTimeout(function () { hide(t); }, 2600);
   }
 
-  var OWNER_USER = "adminsnap";
-  var OWNER_PW = "adminsnapmourad123";
   var TOKEN_KEY = 'snap-gh-token';
   var loggedIn = false;
 
   function savedToken() { try { return localStorage.getItem(TOKEN_KEY) || ''; } catch (e) { return ''; } }
 
-  /* ---- login ---- */
+  /* ---- login (token only) ---- */
   function tryUnlock() {
-    var user = $('loginUser').value.trim();
-    var pw = $('loginPw').value;
     var override = $('loginToken').value.trim();
-    if (user !== OWNER_USER || pw !== OWNER_PW) { showLoginErr('Wrong username or password.'); return; }
-    // Token source: pasted field > previously saved in this browser > embedded (empty here)
+    // Token source: pasted field > previously saved in this browser > embedded placeholder (empty)
     var token = override || savedToken() || STORE.embeddedPat;
-    if (!token) { showLoginErr('First time: paste your GitHub token (PAT) below. It is saved on this device.'); return; }
+    if (!token) { showLoginErr('Paste your GitHub token (fine-grained PAT) below. It is saved on this device.'); return; }
     // verify token works by reading the seats file via the API (proves token valid + repo access)
     STORE.verifyToken(token).then(function () {
       try { localStorage.setItem(TOKEN_KEY, token); } catch (e) {}
@@ -53,11 +48,20 @@
   $('loginForm').addEventListener('submit', function (e) { e.preventDefault(); tryUnlock(); });
   function showLoginErr(m) { var el = $('loginError'); el.textContent = m; show(el); }
 
+  // Clearer message when a write fails because the token lacks write access.
+  function writeErr(e) {
+    var msg = (e && e.message) ? e.message : 'Write failed.';
+    if (/not accessible|Resource not accessible|403/i.test(msg)) {
+      msg = 'Token lacks write access. Edit the fine-grained token → Repository access: SNAP-Coffee-Shop-live → Permissions → Contents: Read and write → Save.';
+    }
+    toast(msg, true);
+  }
+
   function getToken() {
     try { return localStorage.getItem(TOKEN_KEY) || ''; } catch (e) { return ''; }
   }
   $('logoutBtn').addEventListener('click', function () {
-    loggedIn = false; hide($('dashView')); show($('loginView')); $('loginToken').value = ''; $('loginPw').value = '';
+    loggedIn = false; hide($('dashView')); show($('loginView')); $('loginToken').value = '';
   });
 
   /* ---- dashboard ---- */
@@ -87,7 +91,7 @@
       seatsSha = sha;
       $('seatUpdated').textContent = 'Updated ' + new Date().toLocaleTimeString();
       toast('Seats saved');
-    }).catch(function (e) { toast('Save failed: ' + e.message, true); });
+    }).catch(function (e) { writeErr(e); });
   }
   $('seatMinus').addEventListener('click', function () {
     var a = +$('seatAvail').textContent || 0, t = +$('seatTotal').textContent || 0;
@@ -126,7 +130,7 @@
     if (!confirm('Delete this menu item?')) return;
     var next = Object.assign({}, menuItems); delete next[id];
     STORE.writeMenu(next, menuSha, getToken()).then(function (sha) { menuSha = sha; menuItems = next; renderMenuList(); toast('Item deleted'); })
-      .catch(function (e) { toast('Delete failed: ' + e.message, true); });
+      .catch(function (e) { writeErr(e); });
   }
   function startEdit(id) {
     var it = menuItems[id]; if (!it) return;
@@ -179,7 +183,7 @@
     next[id] = item;
     STORE.writeMenu(next, menuSha, getToken()).then(function (sha) {
       menuSha = sha; menuItems = next; renderMenuList(); resetForm(); toast(editId ? 'Saved' : 'Item added');
-    }).catch(function (er) { toast('Save failed: ' + er.message, true); });
+    }).catch(function (er) { writeErr(er); });
   });
 
   $('importMenu').addEventListener('click', function () {
@@ -204,7 +208,7 @@
         };
       });
       STORE.writeMenu(next, menuSha, getToken()).then(function (sha) { menuSha = sha; menuItems = next; renderMenuList(); toast('Imported ' + dishes.length + ' items'); })
-        .catch(function (er) { toast('Import failed: ' + er.message, true); });
+        .catch(function (er) { writeErr(er); });
     }).catch(function () { toast('Import failed', true); });
   });
 })();

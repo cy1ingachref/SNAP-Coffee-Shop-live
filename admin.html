@@ -18,20 +18,14 @@
       <p class="login-sub">Manage seats &amp; menu</p>
 
       <form id="loginForm" class="admin-form" autocomplete="off">
-        <label>Username
-          <input type="text" id="loginUser" required placeholder="adminsnap" autocomplete="username" />
-        </label>
-        <label>Password
-          <input type="password" id="loginPw" required placeholder="••••••••" autocomplete="current-password" />
-        </label>
-        <label>GitHub token (PAT)
-          <input type="password" id="loginToken" required placeholder="ghp_… or github_pat_…" />
+        <label>GitHub token
+          <input type="password" id="loginToken" required placeholder="github_pat_…" autocomplete="off" />
         </label>
         <button type="submit" class="btn-admin primary">Sign in</button>
       </form>
 
       <p id="loginError" class="admin-error" hidden></p>
-      <p class="admin-note">Username + password is the owner gate. The GitHub token (needs <b>repo</b> scope) is what actually writes to the site. See SETUP.md.</p>
+      <p class="admin-note">Use a <b>fine-grained PAT</b> scoped to <b>SNAP-Coffee-Shop-live</b> with <b>Contents: Read and write</b>. Saved only in this browser.</p>
     </div>
   </section>
 
