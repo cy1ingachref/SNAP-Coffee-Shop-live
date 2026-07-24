@@ -137,10 +137,11 @@ body:not(.js) [data-reveal] { opacity: 1 !important; transform: none !important;
 .dish-name { font-size: 1.3rem; margin-bottom: 6px; }
 .dish-desc { color: var(--muted); font-size: 0.92rem; min-height: 2.6em; }
 .dish-price { display: inline-block; margin-top: 10px; font-family: 'Fraunces', serif; font-weight: 600; font-size: 1.25rem; color: var(--coffee); }
-.dish-badge { position: absolute; top: 14px; right: 14px; z-index: 2; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 4px 10px; border-radius: 999px; }
-.dish-badge.hot { background: var(--amber); color: var(--espresso); }
+.dish-badge { position: absolute; top: 14px; right: 14px; z-index: 2; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 5px 11px; border-radius: 999px; box-shadow: 0 6px 16px rgba(44,33,27,0.25); backdrop-filter: blur(2px); }
+.dish-badge.best { background: var(--amber); color: var(--espresso); }
 .dish-badge.new { background: #6e8b5b; color: #fff; }
-.menu-foot { text-align: center; color: var(--muted); font-size: 0.85rem; margin-top: 36px; }
+.dish-badge.local { background: var(--coffee); color: var(--cream); }
+.dish-desc { color: var(--muted); font-size: 0.92rem; min-height: 2.6em; line-height: 1.5; }
 
 /* ===== Reviews ===== */
 .reviews { padding: 100px 0; }

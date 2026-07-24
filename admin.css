@@ -141,6 +141,34 @@
 .mf-row label.grow { flex: 1; }
 .mf-row input, .mf-row select { background: rgba(255,253,249,0.06); border: 1px solid rgba(201,164,122,0.3); border-radius: 10px; padding: 10px 12px; color: var(--cream); font-size: 0.95rem; }
 .mf-row label.grow { flex: 1 1 200px; }
+
+.mf-label { display: block; font-size: 0.8rem; color: var(--latte); margin-top: 4px; letter-spacing: 0.02em; }
+.mf-hint { font-size: 0.72rem; color: var(--latte); opacity: 0.75; margin: -4px 0 2px; }
+.mf-hint #descCount { color: var(--amber); }
+
+/* description textarea */
+.menu-form textarea { width: 100%; background: rgba(255,253,249,0.06); border: 1px solid rgba(201,164,122,0.3); border-radius: 10px; padding: 10px 12px; color: var(--cream); font-size: 0.95rem; font-family: inherit; resize: vertical; line-height: 1.5; }
+.menu-form textarea:focus { outline: none; border-color: var(--amber); }
+
+/* badge picker */
+.badge-picker { display: flex; flex-wrap: wrap; gap: 8px; }
+.badge-opt { cursor: pointer; border: 1px solid rgba(201,164,122,0.4); background: transparent; color: var(--latte);
+  border-radius: 999px; padding: 8px 14px; font-size: 0.82rem; font-family: inherit; transition: all .18s var(--ease); }
+.badge-opt:hover { background: rgba(201,164,122,0.12); color: var(--cream); }
+.badge-opt.selected { background: var(--amber); color: #2c211b; border-color: var(--amber); font-weight: 600; box-shadow: 0 6px 16px rgba(224,162,60,0.3); }
+.badge-opt[data-val="best"].selected { background: var(--amber); }
+.badge-opt[data-val="new"].selected { background: #6e8b5b; color: #fff; }
+.badge-opt[data-val="local"].selected { background: var(--coffee); color: var(--cream); }
+
+/* file drop zone */
+.file-drop { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+  border: 1.5px dashed rgba(201,164,122,0.45); border-radius: 14px; padding: 22px; text-align: center;
+  cursor: pointer; transition: all .18s var(--ease); background: rgba(255,253,249,0.03); }
+.file-drop:hover, .file-drop.drag { border-color: var(--amber); background: rgba(224,162,60,0.08); }
+.file-drop-icon { font-size: 1.5rem; }
+.file-drop-text { color: var(--latte); font-size: 0.85rem; }
+.file-drop-name { color: var(--amber); font-size: 0.78rem; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
 .mf-actions { display: flex; gap: 10px; }
 .img-preview { margin-top: 4px; }
 .img-preview img { max-width: 140px; border-radius: 12px; border: 1px solid rgba(201,164,122,0.3); }

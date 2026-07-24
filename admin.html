@@ -81,20 +81,28 @@
             </label>
             <label>Price (TND)<input type="number" id="menuPrice" min="0" step="0.5" placeholder="3" /></label>
           </div>
-          <label>Description<textarea id="menuDesc" rows="2" placeholder="A short, tasty description…"></textarea></label>
-          <div class="mf-row">
-            <label>Badge
-              <select id="menuBadge">
-                <option value="">None</option>
-                <option value="best">Best seller</option>
-                <option value="new">New</option>
-                <option value="local">Local</option>
-              </select>
-            </label>
-            <label class="grow">Photo
-              <input type="file" id="menuImg" accept="image/*" />
-            </label>
+
+          <label class="mf-label">Description
+            <textarea id="menuDesc" rows="3" maxlength="160" placeholder="What makes it special? e.g. Slow-pulled espresso, velvety micro-foam, a dusting of cocoa."></textarea>
+          </label>
+          <div class="mf-hint"><span id="descCount">0</span>/160 &middot; keep it short &amp; tempting.</div>
+
+          <div class="mf-label">Badge</div>
+          <div class="badge-picker" id="menuBadge">
+            <button type="button" class="badge-opt" data-val="">None</button>
+            <button type="button" class="badge-opt" data-val="best">&#9733; Best seller</button>
+            <button type="button" class="badge-opt" data-val="new">&#10047; New</button>
+            <button type="button" class="badge-opt" data-val="local">&#9728; Local</button>
           </div>
+
+          <div class="mf-label">Photo</div>
+          <label class="file-drop" id="menuImgWrap">
+            <input type="file" id="menuImg" accept="image/*" hidden />
+            <span class="file-drop-icon">&#128247;</span>
+            <span class="file-drop-text">Click to choose or drop an image</span>
+            <span class="file-drop-name" id="menuImgName"></span>
+          </label>
+
           <div id="imgPreview" class="img-preview hidden"><img id="imgPreviewImg" alt="preview" /></div>
           <div class="mf-actions">
             <button type="submit" class="btn-admin primary" id="menuSubmit">Add item</button>
@@ -110,9 +118,9 @@
   <div id="toast" class="toast hidden"></div>
 
   <!-- GitHub-storage layer (no backend) -->
-  <script src="github-config.js"></script>
-  <script src="github-token.js"></script>
-  <script src="github-store.js"></script>
-  <script src="admin-github.js"></script>
+  <script src="github-config.js?v=20260801"></script>
+  <script src="github-token.js?v=20260801"></script>
+  <script src="github-store.js?v=20260801"></script>
+  <script src="admin-github.js?v=20260801"></script>
 </body>
 </html>

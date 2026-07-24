@@ -75,17 +75,57 @@
   });
 
   /* ---- dashboard ---- */
+  // keep module-level avail/total authoritative so a click always builds on
+  // the correct value even before the previous write resolves.
+  var seatsAvail = 20, seatsTotal = 20;
+  var seatQueue = Promise.resolve();
+  // Guard against a stale init sha (e.g. cached old script): before sending a
+  // seat write, make sure seatsSha is the real current file sha — refresh once
+  // if it's still null. The 409 retry inside writeSeats covers the rest.
+  function ensureSeatsSha() {
+    if (seatsSha) return Promise.resolve();
+    return STORE.readSeatsAuth(getToken()).then(function (r) { seatsSha = r.sha; });
+  }
+  function writeSeats(a, t) {
+    seatsAvail = a; seatsTotal = t;
+    $('seatAvail').textContent = a; $('seatTotal').textContent = t;
+    var job = seatQueue.then(function () {
+      return ensureSeatsSha().then(function () {
+        return STORE.writeSeats({ total: t, available: a, updatedAt: Date.now() }, seatsSha, getToken());
+      }).then(function (sha) { seatsSha = sha; return true; })
+        .catch(function (e) {
+          if (/does not match|409/i.test((e && e.message) || '')) {
+            return STORE.readSeatsAuth(getToken()).then(function (r) {
+              seatsSha = r.sha;
+              return STORE.writeSeats({ total: t, available: a, updatedAt: Date.now() }, seatsSha, getToken())
+                .then(function (sha2) { seatsSha = sha2; return true; });
+            });
+          }
+          throw e;
+        });
+    });
+    seatQueue = job.catch(function () { return false; });
+    job.then(function (ok) {
+      if (ok) { $('seatUpdated').textContent = 'Updated ' + new Date().toLocaleTimeString(); toast('Seats saved'); }
+    }).catch(function (e) { writeErr(e); });
+  }
+  $('seatMinus').addEventListener('click', function () {
+    writeSeats(Math.max(0, seatsAvail - 1), seatsTotal);
+  });
+  $('seatPlus').addEventListener('click', function () {
+    writeSeats(Math.min(seatsTotal, seatsAvail + 1), seatsTotal);
+  });
+  $('seatSave').addEventListener('click', function () {
+    seatsTotal = Math.max(0, +$('seatTotalInput').value || 0);
+    seatsAvail = Math.min(seatsAvail, seatsTotal);
+    writeSeats(seatsAvail, seatsTotal);
+  });
+
   var seatsSha = null, menuSha = null;
-  var seatsAvail = 20, seatsTotal = 20; // authoritative state, updated optimistically on each click
-  var seatQueue = Promise.resolve();    // serializes seat writes so two PUTs never race
-  var menuItems = {}, editId = null, currentEditImg = null;
+  var menuItems = {}, editId = null, currentEditImg = null, currentBadge = '';
 
   function initDashboard() {
     var token = getToken();
-    // Read via the authenticated API so we capture the file `sha` GitHub
-    // needs to accept a commit. (Public Pages read returns sha:null, which
-    // is what caused "sha wasn't supplied".) Fall back to showing current
-    // values if the read fails.
     STORE.readSeatsAuth(token).then(function (r) {
       seatsSha = r.sha;
       var d = r.data || {};
@@ -103,49 +143,12 @@
     }).catch(function () { toast('Could not load menu (check token/connection)', true); });
   }
 
-  // Serialized, optimistic seat write. Prevents the GitHub 409
-  // ("...does not match <sha>") you get when clicking -/+ faster than the
-  // previous PUT resolves: only one write is ever in flight, and the
-  // displayed number + state are updated immediately so the next click
-  // builds on the correct value and actually accumulates.
-  function writeSeats(avail, total) {
-    seatsAvail = avail; seatsTotal = total;
-    $('seatAvail').textContent = avail; $('seatTotal').textContent = total;
-    var job = seatQueue.then(function () {
-      return STORE.writeSeats({ total: total, available: avail, updatedAt: Date.now() }, seatsSha, getToken())
-        .then(function (sha) { seatsSha = sha; return true; })
-        .catch(function (e) {
-          // sha conflict: re-read the latest file sha and retry once.
-          if (/does not match|409/i.test((e && e.message) || '')) {
-            return STORE.readSeatsAuth(getToken()).then(function (r) {
-              seatsSha = r.sha;
-              return STORE.writeSeats({ total: total, available: avail, updatedAt: Date.now() }, seatsSha, getToken())
-                .then(function (sha2) { seatsSha = sha2; return true; });
-            });
-          }
-          throw e;
-        });
+  function setBadge(val) {
+    currentBadge = val || '';
+    document.querySelectorAll('#menuBadge .badge-opt').forEach(function (b) {
+      b.classList.toggle('selected', b.getAttribute('data-val') === currentBadge);
     });
-    // keep the chain alive even if a write fails, so future writes still queue
-    seatQueue = job.catch(function () { return false; });
-    job.then(function (ok) {
-      if (ok) {
-        $('seatUpdated').textContent = 'Updated ' + new Date().toLocaleTimeString();
-        toast('Seats saved');
-      }
-    }).catch(function (e) { writeErr(e); });
   }
-  $('seatMinus').addEventListener('click', function () {
-    writeSeats(Math.max(0, seatsAvail - 1), seatsTotal);
-  });
-  $('seatPlus').addEventListener('click', function () {
-    writeSeats(Math.min(seatsTotal, seatsAvail + 1), seatsTotal);
-  });
-  $('seatSave').addEventListener('click', function () {
-    seatsTotal = Math.max(0, +$('seatTotalInput').value || 0);
-    seatsAvail = Math.min(seatsAvail, seatsTotal);
-    writeSeats(seatsAvail, seatsTotal);
-  });
 
   function renderMenuList() {
     var ul = $('menuList'); var keys = Object.keys(menuItems);
@@ -156,9 +159,12 @@
       var img = it.img ? '<img src="' + it.img + '" alt="" />' : '<div class="no-img">img</div>';
       var badge = it.badge ? '<span class="chip">' + it.badge + '</span>' : '';
       var price = (typeof it.price === 'number') ? it.price + ' TND' : '';
+      // items now store separate name/desc; fall back to a single 'name' for old data.
+      var name = it.name || '';
+      var desc = it.desc || '';
       return '<li class="mi" data-id="' + k + '"><div class="mi-img">' + img + '</div>' +
-        '<div class="mi-body"><strong>' + (it.name || '') + '</strong> ' + badge +
-        '<span class="mi-cat">' + (it.cat || '') + '</span><p>' + (it.desc || '') + '</p></div>' +
+        '<div class="mi-body"><strong>' + name + '</strong> ' + badge +
+        '<span class="mi-cat">' + (it.cat || '') + '</span><p>' + desc + '</p></div>' +
         '<div class="mi-price">' + price + '</div>' +
         '<div class="mi-actions"><button class="btn-admin ghost edit" data-id="' + k + '">Edit</button>' +
         '<button class="btn-admin danger del" data-id="' + k + '">Delete</button></div></li>';
@@ -175,21 +181,43 @@
   function startEdit(id) {
     var it = menuItems[id]; if (!it) return;
     editId = id; currentEditImg = it.img || null;
-    $('menuId').value = id; $('menuName').value = it.name || ''; $('menuCat').value = it.cat || 'food';
-    $('menuPrice').value = (typeof it.price === 'number') ? it.price : ''; $('menuDesc').value = it.desc || '';
-    $('menuBadge').value = it.badge || '';
+    $('menuId').value = id; $('menuName').value = it.name || '';
+    $('menuCat').value = (it.cat || 'food') === 'drink' ? 'coffee' : (it.cat || 'food');
+    $('menuPrice').value = (typeof it.price === 'number') ? it.price : '';
+    $('menuDesc').value = it.desc || ''; updateDescCount();
+    setBadge(it.badge || '');
     $('menuSubmit').textContent = 'Save changes'; show($('menuCancel'));
     if (currentEditImg) showPreview(currentEditImg); else hidePreview();
   }
   $('menuCancel').addEventListener('click', resetForm);
   function resetForm() {
-    editId = null; currentEditImg = null; $('menuForm').reset(); $('menuId').value = '';
+    editId = null; currentEditImg = null; currentBadge = ''; $('menuForm').reset(); $('menuId').value = '';
     $('menuSubmit').textContent = 'Add item'; hide($('menuCancel')); hidePreview();
+    setBadge(''); $('menuImgName').textContent = ''; updateDescCount();
   }
+  function updateDescCount() { var c = $('menuDesc'); if (c) $('descCount').textContent = (c.value || '').length; }
+  $('menuDesc').addEventListener('input', updateDescCount);
+
+  // badge picker (radio-style)
+  $('menuBadge').querySelectorAll('.badge-opt').forEach(function (b) {
+    b.addEventListener('click', function () { setBadge(b.getAttribute('data-val')); });
+  });
+  setBadge('');
+
+  // file input: show filename + drag & drop
   var imgInput = $('menuImg');
-  imgInput.addEventListener('change', function () {
-    var file = imgInput.files && imgInput.files[0]; if (!file) return;
+  var drop = $('menuImgWrap');
+  function handleFile(file) {
+    if (!file) return;
+    $('menuImgName').textContent = file.name;
     resizeImage(file).then(function (d) { currentEditImg = d; showPreview(d); }).catch(function () { toast('Could not read image', true); });
+  }
+  imgInput.addEventListener('change', function () { handleFile(imgInput.files && imgInput.files[0]); });
+  ['dragenter', 'dragover'].forEach(function (ev) { drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.add('drag'); }); });
+  ['dragleave', 'drop'].forEach(function (ev) { drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.remove('drag'); }); });
+  drop.addEventListener('drop', function (e) {
+    var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+    if (f) { imgInput.files = e.dataTransfer.files; handleFile(f); }
   });
   function showPreview(src) { $('imgPreviewImg').src = src; show($('imgPreview')); }
   function hidePreview() { hide($('imgPreview')); $('imgPreviewImg').src = ''; }
@@ -215,7 +243,7 @@
     var item = {
       name: name, cat: $('menuCat').value,
       price: parseFloat($('menuPrice').value) || 0,
-      desc: $('menuDesc').value.trim(), badge: $('menuBadge').value,
+      desc: $('menuDesc').value.trim(), badge: currentBadge,
       img: currentEditImg, order: (menuItems[editId] && menuItems[editId].order) || Object.keys(menuItems).length
     };
     var next = Object.assign({}, menuItems);
