@@ -48,7 +48,7 @@
       'meta.title': 'SNAP Coffee — Artisan Coffee & Fresh Bites · Ariana, Tunis',
       'meta.desc': 'SNAP Coffee in Ariana (Les Jardins de Babylon) — single-origin coffee, in-house pastries and a calm space for students and remote workers. Open until midnight. Rated 4.3 on Google.',
       'brand.sub': 'coffee',
-      'nav.menu': 'Menu', 'nav.reviews': 'Reviews', 'nav.visit': 'Visit',
+      'nav.menu': 'Menu', 'nav.visit': 'Visit',
       'hero.eyebrow': 'Ariana · Les Jardins de Babylon',
       'hero.title': 'Slow mornings,<br><em>bright</em> cups.',
       'hero.lead': 'A neighbourhood café where every cup is pulled with care — for students, remote workers, and anyone who likes their coffee made well.',
@@ -78,12 +78,6 @@
       'dish.pdj1.name': 'Petit Déj — 1 Person', 'dish.pdj1.desc': 'Coffee or café crème, mineral water, milk, chocolate crepe, croissant, sliced baguette & a trio of spreads (butter, chocolate, apricot jam).',
       'dish.pdj2.name': 'Petit Déj — 2 Persons', 'dish.pdj2.desc': 'For two: fresh orange juice & espresso, sweet chocolate crepe, savory ham & cheese galette, toast, scrambled eggs, green salad & tomato.',
       'dish.pdjt.name': 'Petit Déj Tunisien', 'dish.pdjt.desc': 'Msemen & pastry, fried egg, salad (lettuce, tomato, cucumber, orange), harissa, labneh, olive oil, honey & coffee.',
-      'reviews.eyebrow': 'Loved locally', 'reviews.title': 'What people say',
-      'reviews.from': 'from', 'reviews.google': 'Google reviews',
-      'reviews.r1': '“Best study spot around. The Wi-Fi is solid and the latte is always on point.”',
-      'reviews.r2': '“Their sandwich is unreal for the price. I come here every lunch break.”',
-      'reviews.r3': '“Cozy, quiet, friendly. Feels like a second living room during exam season.”',
-      'reviews.regular': 'regular', 'reviews.worker': 'nearby worker', 'reviews.student': 'student',
       'visit.eyebrow': 'Come say hi', 'visit.title': 'Visit SNAP',
       'visit.where': 'Where', 'visit.call': 'Call', 'visit.hours': 'Hours',
       'visit.hours_val': 'Open daily · until 12:00 AM',
@@ -96,7 +90,7 @@
       'meta.title': 'SNAP Coffee — Café artisanal & gourmandises · Ariana, Tunis',
       'meta.desc': 'SNAP Coffee à Ariana (Les Jardins de Babylon) — cafés de spécialité, pâtisseries maison et un coin calme pour les étudiants et les télétravailleurs. Ouvert jusqu’à minuit. Noté 4,3 sur Google.',
       'brand.sub': 'coffee',
-      'nav.menu': 'Menu', 'nav.reviews': 'Avis', 'nav.visit': 'Visite',
+      'nav.menu': 'Menu', 'nav.visit': 'Visite',
       'hero.eyebrow': 'Ariana · Les Jardins de Babylon',
       'hero.title': 'Matinées lentes,<br><em>tasses</em> lumineuses.',
       'hero.lead': 'Un café de quartier où chaque tasse est préparée avec soin — pour les étudiants, les télétravailleurs et tous les amateurs de bon café.',
@@ -126,12 +120,6 @@
       'dish.pdj1.name': 'Petit Déj — 1 Personne', 'dish.pdj1.desc': 'Café ou crème, eau minérale, lait, crêpe chocolat, croissant, baguette & trio de confitures (beurre, chocolat, abricot).',
       'dish.pdj2.name': 'Petit Déj — 2 Personnes', 'dish.pdj2.desc': 'Pour deux : jus d’orange & espresso, crêpe chocolat, galette salée jambon-fromage, toast, œufs brouillés, salade verte & tomate.',
       'dish.pdjt.name': 'Petit Déj Tunisien', 'dish.pdjt.desc': 'Msemen & pâtisserie, œuf sur le plat, salade (laitue, tomate, concombre, orange), harissa, labneh, huile d’olive, miel & café.',
-      'reviews.eyebrow': 'Aimé des habitants', 'reviews.title': 'Ce qu’ils disent',
-      'reviews.from': 'par', 'reviews.google': 'avis Google',
-      'reviews.r1': '“Le meilleur endroit pour étudier. Le Wi-Fi est solide et le latte toujours parfait.”',
-      'reviews.r2': '“Leur sandwich est incroyable pour le prix. J’y viens à chaque pause déjeuner.”',
-      'reviews.r3': '“Cosy, calme, accueillant. Comme un second salon pendant les exams.”',
-      'reviews.regular': 'habitué', 'reviews.worker': 'travailleur du coin', 'reviews.student': 'étudiant',
       'visit.eyebrow': 'Venez nous dire bonjour', 'visit.title': 'Visitez SNAP',
       'visit.where': 'Où', 'visit.call': 'Appel', 'visit.hours': 'Horaires',
       'visit.hours_val': 'Ouvert tous les jours · jusqu’à 00:00',
@@ -144,7 +132,7 @@
       'meta.title': 'سناپ كوفي — قهوة حرفية ووجبات خفيفة طازجة · أريانة، تونس',
       'meta.desc': 'سناپ كوفي في أريانة (حدائق بابل) — قهوة مختصة، حلويات محضّرة يوميًا، ومكان هادئ للطلاب والعاملين عن بُعد. مفتوح حتى منتصف الليل. تقييم 4.3 على جوجل.',
       'brand.sub': 'coffee',
-      'nav.menu': 'القائمة', 'nav.reviews': 'التقييمات', 'nav.visit': 'الزيارة',
+      'nav.menu': 'القائمة', 'nav.visit': 'الزيارة',
       'hero.eyebrow': 'أريانة · حدائق بابل',
       'hero.title': 'صباحات هادئة،<br><em>أكواب</em> مشرقة.',
       'hero.lead': 'مقهى حيّ يُحضّر فيه كل كوب بعناية — للطلاب، والعاملين عن بُعد، وكل من يحب قهوته جيدة.',
@@ -174,12 +162,6 @@
       'dish.pdj1.name': 'بريك — شخص واحد', 'dish.pdj1.desc': 'قهوة أو كرème، ماء معدني، حليب، كريب شوكولاتة، كرواسون، بaguette وثلاثة أنواع من المربى (زبدة، شوكولاتة، مشمش).',
       'dish.pdj2.name': 'بريك — شخصان', 'dish.pdj2.desc': 'لشخصين: عصير برتقال طازج وإسبريسو، كريب شوكولاتة، galette مالح جبن ولحم، توست، بيض مخفوق، سلطة خضراء وطماطم.',
       'dish.pdjt.name': 'بريك تونسي', 'dish.pdjt.desc': 'msamen وحلويات، بيض مقلي، سلطة (خس وطماطم وخيار وبرتقال)، harissa، labneh، زيت زيتون، عسل وقهوة.',
-      'reviews.eyebrow': 'محبوب محليًا', 'reviews.title': 'ماذا يقول الناس',
-      'reviews.from': 'من', 'reviews.google': 'تقييمات جوجل',
-      'reviews.r1': '“أفضل مكان للدراسة. الإنترنت قوي واللاتيه دائمًا ممتاز.”',
-      'reviews.r2': '“الساندويتش عندهم خرافي مقابل السعر. أزورهم كل استراحة غداء.”',
-      'reviews.r3': '“مريح وهادئ وودود. كأنه غرفة معيشة ثانية في موعد الامتحانات.”',
-      'reviews.regular': 'زبون دائم', 'reviews.worker': 'عامل قريب', 'reviews.student': 'طالب',
       'visit.eyebrow': 'مرحبًا بك', 'visit.title': 'زوروا سناپ',
       'visit.where': 'المكان', 'visit.call': 'اتصال', 'visit.hours': 'الساعات',
       'visit.hours_val': 'مفتوح يوميًا · حتى 12:00 ص',
@@ -231,21 +213,6 @@
     }
     requestAnimationFrame(tick);
   }
-  var scoreEl = document.querySelector('.score');
-  var numEl = document.querySelector('.review-count .num');
-  var reviewsSec = document.getElementById('reviews');
-  var rated = false;
-  var rIo = new IntersectionObserver(function (entries) {
-    entries.forEach(function (e) {
-      if (e.isIntersecting && !rated) {
-        rated = true;
-        if (scoreEl) countUp(scoreEl, 4.3, 1200, 1);
-        if (numEl) countUp(numEl, 26, 1400, 0);
-        rIo.disconnect();
-      }
-    });
-  }, { threshold: 0.4 });
-  if (reviewsSec) rIo.observe(reviewsSec);
 
   // Menu filter
   var tabs = document.querySelectorAll('.menu-tab');
