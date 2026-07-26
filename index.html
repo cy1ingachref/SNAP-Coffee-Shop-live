@@ -62,6 +62,18 @@
           </div>
           <span class="avail-time" id="availUpdated"></span>
         </div>
+
+        <!-- Owner mirror: shows the admin panel's live seat count here, and
+             links to the admin. Seats can ONLY be changed in the admin; this
+             is a read-only reflection of that same data/seats.json. -->
+        <fieldset class="mirror-fieldset" id="mirrorFieldset">
+          <legend>Live from the admin panel</legend>
+          <div class="mirror-row">
+            <span class="mirror-seats"><b id="mirrorAvail">20</b><span class="slash">/</span><span id="mirrorTotal">20</span><span>&nbsp;seats free</span></span>
+            <a class="mirror-link" id="mirrorLink" href="admin.html" target="_blank" rel="noopener">Open admin</a>
+          </div>
+          <p class="mirror-note">Seats shown here update automatically when the owner changes them in the admin panel.</p>
+        </fieldset>
       </div>
       <div class="hero-art">
         <img class="float-cup" src="images/cappuccino.jpg" alt="A freshly brewed coffee at SNAP Coffee" />
@@ -283,6 +295,7 @@
   <script src="github-token.js"></script>
   <script src="github-store.js"></script>
   <script src="customer-github.js"></script>
+  <script src="mirror.js?v=20260726b"></script>
 
   <script src="script.js"></script>
 </body>

@@ -18,15 +18,32 @@
     return h;
   }
 
-  // PUBLIC read: same-origin Pages asset (works even when repo is private,
-  // because GitHub Pages serves these files publicly).
+  // PUBLIC read: used by the customer site + the live mirror fieldset.
+  // Primary path = the GitHub Contents API with ?ref=<branch>. It returns the
+  // FRESH file (no CDN cache), so a seat change the admin makes shows up on the
+  // public site within seconds instead of the ~minutes Pages CDN lag. Falls
+  // back to the same-origin Pages asset if the API call fails (rate limit,
+  // offline, etc.). Both read the SAME data/seats.json the admin writes to.
   function readPublic(path) {
-    return fetch(path + "?t=" + Date.now(), { cache: "no-store" })
-      .then(function (r) {
-        if (!r.ok) return { sha: null, data: null };
-        return r.json().then(function (data) { return { sha: null, data: data }; });
-      })
-      .catch(function () { return { sha: null, data: null }; });
+    var apiUrl = API + "/repos/" + CFG.repo + "/contents/" + path + "?ref=" + CFG.branch;
+    function fromApi() {
+      return fetch(apiUrl, { headers: { "Accept": "application/vnd.github+json" } }).then(function (r) {
+        if (!r.ok) throw new Error("HTTP " + r.status);
+        return r.json();
+      }).then(function (j) {
+        var data = j.content ? JSON.parse(decodeBase64(j.content)) : null;
+        return { sha: j.sha || null, data: data };
+      });
+    }
+    function fromPages() {
+      return fetch(path + "?t=" + Date.now(), { cache: "no-store" })
+        .then(function (r) {
+          if (!r.ok) return { sha: null, data: null };
+          return r.json().then(function (data) { return { sha: null, data: data }; });
+        })
+        .catch(function () { return { sha: null, data: null }; });
+    }
+    return fromApi().catch(function () { return fromPages(); });
   }
 
   // WRITE: GitHub API (needs a token — the embedded PAT).
