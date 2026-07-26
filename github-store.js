@@ -54,19 +54,27 @@
       if (sha) b.sha = sha;
       return b;
     }
-    // Retry once on 409: a PUT to an existing file without the current `sha`
-    // (or with a stale one) is rejected by GitHub. Re-read the latest `sha`
-    // and retry so a single click always succeeds.
+    // GitHub rejects a PUT whose `sha` is stale with HTTP 409 ("...does not
+    // match <sha>"). This happens if the file was just changed OR — more
+    // commonly — because the contents API has read-after-write lag and a
+    // re-read still returns the old sha moments after a commit. So we LOOP:
+    // re-read the latest sha and retry, with a short backoff to clear the lag
+    // window. Up to 10 tries makes a single click effectively always succeed.
     function attempt(sha, depth) {
       depth = depth || 0;
+      var MAX = 10;
       return fetch(API + "/repos/" + CFG.repo + "/contents/" + path, {
         method: "PUT",
         headers: authHeaders(token),
         body: JSON.stringify(buildBody(sha))
       }).then(function (r) {
         if (r.ok) return r.json();
-        if (r.status === 409 && depth < 1) {
-          return readFile(path, token).then(function (f) { return attempt(f.sha, depth + 1); });
+        if (r.status === 409 && depth < MAX) {
+          return readFile(path, token).then(function (f) {
+            return new Promise(function (res) {
+              setTimeout(function () { res(attempt(f.sha, depth + 1)); }, 250);
+            });
+          });
         }
         return r.json().then(function (e) { throw new Error(e.message || ("HTTP " + r.status)); });
       });

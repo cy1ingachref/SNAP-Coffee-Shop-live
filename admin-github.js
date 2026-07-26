@@ -82,8 +82,9 @@
   // Serialized seat write. Each job reads the CURRENT file sha from the API
   // (authoritative — survives a stale init sha, another tab editing the file,
   // or a cached script), then PUTs with that sha. Jobs run one at a time in the
-  // queue so rapid clicks never collide. On a GitHub 409 (sha mismatch) we
-  // re-read the latest sha and RETRY up to 6 times (real loop, not one-shot).
+  // queue so rapid clicks never collide. The actual PUT runs through
+  // SNAP_STORE.writeSeats, which LOOPS and re-reads the latest sha on any 409
+  // (GitHub read-after-write lag), so a single click effectively always lands.
   // After the write we RECONCILE: re-read the repo and confirm the value we
   // wanted actually landed. The UI shows a green "Saved ✔" / red "Not saved"
   // status so the owner always knows whether the click worked. We never leave
@@ -100,31 +101,23 @@
     setSeatStatus('pending', 'Saving…');
 
     function attempt() {
-      // Read the live sha, then PUT with it. Retries on 409 up to 6 times.
+      // Read the live sha, then PUT (store handles any 409 internally).
       return STORE.readSeatsAuth(getToken()).then(function (r) {
         seatsSha = r.sha;
         return STORE.writeSeats({ total: t, available: a, updatedAt: Date.now() }, seatsSha, getToken())
           .then(function (sha) { seatsSha = sha; return true; });
       });
     }
-    function attemptWithRetry(tries) {
-      tries = tries || 0;
-      return attempt().catch(function (e) {
-        var msg = (e && e.message) || '';
-        if (/does not match|409/i.test(msg) && tries < 6) return attemptWithRetry(tries + 1);
-        throw e;
-      });
-    }
     function reconcile() {
       // Confirm the value actually persisted (read-after-write may lag, so poll).
-      function readUntil(n, k) {
+      function readUntil(k) {
         if (k >= 40) return STORE.readSeatsAuth(getToken());
         return STORE.readSeatsAuth(getToken()).then(function (rr) {
           if (rr.data && rr.data.available === a && rr.data.total === t) return rr;
-          return new Promise(function (res) { setTimeout(function () { res(readUntil(a, k + 1)); }, 250); });
+          return new Promise(function (res) { setTimeout(function () { res(readUntil(k + 1)); }, 250); });
         });
       }
-      return readUntil(a, 0).then(function (rr) {
+      return readUntil(0).then(function (rr) {
         if (rr.data && rr.data.available === a && rr.data.total === t) {
           seatsSha = rr.sha;
           setSeatStatus('ok', 'Saved ✔ ' + new Date().toLocaleTimeString());
@@ -140,9 +133,14 @@
         return false;
       });
     }
-    var job = seatQueue.then(attemptWithRetry).then(reconcile).catch(function (e) {
+    var job = seatQueue.then(attempt).then(reconcile).catch(function (e) {
+      // Sanitize: never show a raw "...does not match <sha>" / 409 dump. The
+      // reconcile step is the authority; if we get here the write failed hard.
       var msg = (e && e.message) || 'Write failed';
-      setSeatStatus('err', (/network|fetch|failed|timeout/i.test(msg) ? 'No connection — not saved.' : 'Not saved: ' + msg));
+      var friendly = /network|fetch|failed|timeout/i.test(msg)
+        ? 'No connection — not saved.'
+        : 'Could not save — tap again.';
+      setSeatStatus('err', friendly);
       return false;
     });
     seatQueue = job.catch(function () { return false; });
