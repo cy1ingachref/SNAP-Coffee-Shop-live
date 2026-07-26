@@ -142,5 +142,14 @@
     "badge": "local",
     "img": "images/petit-dej-tunisien.jpg",
     "order": 15
+  },
+  "m_test_1785061100768": {
+    "name": "TEST ITEM",
+    "cat": "coffee",
+    "price": 1.5,
+    "desc": "automated test",
+    "badge": "",
+    "img": "",
+    "order": 99
   }
 }
