@@ -142,14 +142,5 @@
     "badge": "local",
     "img": "images/petit-dej-tunisien.jpg",
     "order": 15
-  },
-  "m_api_1785062131413": {
-    "name": "API TEST",
-    "cat": "coffee",
-    "price": 1,
-    "desc": "x",
-    "badge": "",
-    "img": "",
-    "order": 99
   }
 }
