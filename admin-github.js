@@ -79,36 +79,73 @@
   var seatsSha = null, menuSha = null;
   var seatsAvail = 20, seatsTotal = 20;
   var seatQueue = Promise.resolve();
-  // Serialized seat write. Each job (a) reads the CURRENT file sha from the
-  // API — authoritative, so it survives a stale init sha, another tab editing
-  // the file, or a cached/old script — and (b) PUTs with that sha. Because the
-  // jobs run one at a time in the queue, rapid clicks never collide and the
-  // GitHub 409 ("...does not match <sha>") cannot occur. Increment/decrement
-  // are SILENT: the number updates in the UI immediately and any write/retry
-  // 409 is retried in the background — never pops an error to the owner.
+  // Serialized seat write. Each job reads the CURRENT file sha from the API
+  // (authoritative — survives a stale init sha, another tab editing the file,
+  // or a cached script), then PUTs with that sha. Jobs run one at a time in the
+  // queue so rapid clicks never collide. On a GitHub 409 (sha mismatch) we
+  // re-read the latest sha and RETRY up to 6 times (real loop, not one-shot).
+  // After the write we RECONCILE: re-read the repo and confirm the value we
+  // wanted actually landed. The UI shows a green "Saved ✔" / red "Not saved"
+  // status so the owner always knows whether the click worked. We never leave
+  // the UI displaying a number that failed to persist.
+  function setSeatStatus(state, msg) {
+    var el = $('seatUpdated'); if (!el) return;
+    el.classList.remove('ok', 'err', 'pending');
+    el.textContent = msg || '';
+    if (state) el.classList.add(state);
+  }
   function writeSeats(a, t) {
     seatsAvail = a; seatsTotal = t;
     $('seatAvail').textContent = a; $('seatTotal').textContent = t;
-    // One attempt: read the current file sha, then PUT with it.
+    setSeatStatus('pending', 'Saving…');
+
     function attempt() {
+      // Read the live sha, then PUT with it. Retries on 409 up to 6 times.
       return STORE.readSeatsAuth(getToken()).then(function (r) {
         seatsSha = r.sha;
         return STORE.writeSeats({ total: t, available: a, updatedAt: Date.now() }, seatsSha, getToken())
           .then(function (sha) { seatsSha = sha; return true; });
       });
     }
-    var job = seatQueue.then(attempt).catch(function (e) {
-      // Background retry on sha conflict or transient network error — never
-      // surfaces an error to the owner; UI already shows the latest value.
-      var msg = (e && e.message) || '';
-      if (/does not match|409|network|timeout|fetch|failed/i.test(msg)) {
-        var tries = (e.__tries || 0) + 1;
-        if (tries < 6) { e.__tries = tries; return Promise.resolve().then(attempt).catch(function (e2) { e2.__tries = tries; throw e2; }); }
+    function attemptWithRetry(tries) {
+      tries = tries || 0;
+      return attempt().catch(function (e) {
+        var msg = (e && e.message) || '';
+        if (/does not match|409/i.test(msg) && tries < 6) return attemptWithRetry(tries + 1);
+        throw e;
+      });
+    }
+    function reconcile() {
+      // Confirm the value actually persisted (read-after-write may lag, so poll).
+      function readUntil(n, k) {
+        if (k >= 40) return STORE.readSeatsAuth(getToken());
+        return STORE.readSeatsAuth(getToken()).then(function (rr) {
+          if (rr.data && rr.data.available === a && rr.data.total === t) return rr;
+          return new Promise(function (res) { setTimeout(function () { res(readUntil(a, k + 1)); }, 250); });
+        });
       }
+      return readUntil(a, 0).then(function (rr) {
+        if (rr.data && rr.data.available === a && rr.data.total === t) {
+          seatsSha = rr.sha;
+          setSeatStatus('ok', 'Saved ✔ ' + new Date().toLocaleTimeString());
+          return true;
+        }
+        // Value did not land — revert the displayed number to the repo truth.
+        var rd = rr.data || {};
+        var rt = (typeof rd.total === 'number') ? rd.total : t;
+        var ra = (typeof rd.available === 'number') ? rd.available : a;
+        seatsAvail = ra; seatsTotal = rt;
+        $('seatAvail').textContent = ra; $('seatTotal').textContent = rt;
+        setSeatStatus('err', 'Not saved — reverted to ' + ra + '/' + rt + '. Tap again.');
+        return false;
+      });
+    }
+    var job = seatQueue.then(attemptWithRetry).then(reconcile).catch(function (e) {
+      var msg = (e && e.message) || 'Write failed';
+      setSeatStatus('err', (/network|fetch|failed|timeout/i.test(msg) ? 'No connection — not saved.' : 'Not saved: ' + msg));
       return false;
     });
     seatQueue = job.catch(function () { return false; });
-    // intentionally no success/error toast
   }
   $('seatMinus').addEventListener('click', function () {
     writeSeats(Math.max(0, seatsAvail - 1), seatsTotal);
@@ -122,7 +159,6 @@
     writeSeats(seatsAvail, seatsTotal);
   });
 
-  var seatsSha = null, menuSha = null;
   var menuItems = {}, editId = null, currentEditImg = null, currentBadge = '';
 
   function initDashboard() {
