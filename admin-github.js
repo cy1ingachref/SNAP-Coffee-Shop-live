@@ -151,6 +151,14 @@
   $('seatPlus').addEventListener('click', function () {
     writeSeats(Math.min(seatsTotal, seatsAvail + 1), seatsTotal);
   });
+  // Set available to an exact number (multi-seat jump in one action).
+  $('seatApply').addEventListener('click', function () {
+    var n = +$('seatTargetInput').value;
+    if (!isFinite(n) || n < 0) n = 0;
+    n = Math.max(0, Math.min(n, seatsTotal));
+    $('seatTargetInput').value = n;
+    writeSeats(n, seatsTotal);
+  });
   $('seatSave').addEventListener('click', function () {
     seatsTotal = Math.max(0, +$('seatTotalInput').value || 0);
     seatsAvail = Math.min(seatsAvail, seatsTotal);

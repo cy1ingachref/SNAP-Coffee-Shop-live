@@ -63,16 +63,13 @@
           <span class="avail-time" id="availUpdated"></span>
         </div>
 
-        <!-- Owner mirror: shows the admin panel's live seat count here, and
-             links to the admin. Seats can ONLY be changed in the admin; this
-             is a read-only reflection of that same data/seats.json. -->
+        <!-- Live availability: mirrors the owner's live seat count (read-only). -->
         <fieldset class="mirror-fieldset" id="mirrorFieldset">
-          <legend>Live from the admin panel</legend>
+          <legend>Live availability</legend>
           <div class="mirror-row">
             <span class="mirror-seats"><b id="mirrorAvail">20</b><span class="slash">/</span><span id="mirrorTotal">20</span><span>&nbsp;seats free</span></span>
-            <a class="mirror-link" id="mirrorLink" href="admin.html" target="_blank" rel="noopener">Open admin</a>
           </div>
-          <p class="mirror-note">Seats shown here update automatically when the owner changes them in the admin panel.</p>
+          <p class="mirror-note">Live seat count — updates automatically.</p>
         </fieldset>
       </div>
       <div class="hero-art">
@@ -270,7 +267,6 @@
     <div class="container footer-inner">
       <span class="brand-logo"><img class="brand-logo-img" src="images/snap-logo.jpg" alt="SNAP Coffee" /></span>
       <p>© <span id="year"></span> <span data-i18n="footer.copy">SNAP Coffee · Ariana, Tunis</span></p>
-      <a class="owner-link" href="admin.html">Owner sign-in</a>
       <a class="to-top" href="#top" aria-label="Back to top">↑</a>
     </div>
   </footer>

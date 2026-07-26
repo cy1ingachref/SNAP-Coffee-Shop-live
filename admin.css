@@ -131,6 +131,9 @@
 .seats-meta { display: flex; align-items: flex-end; gap: 10px; justify-content: center; }
 .seats-meta .inline { display: flex; flex-direction: column; gap: 5px; font-size: 0.8rem; color: var(--latte); }
 .seats-meta input { width: 90px; background: rgba(255,253,249,0.06); border: 1px solid rgba(201,164,122,0.3); border-radius: 10px; padding: 9px 11px; color: var(--cream); }
+.seats-set { display: flex; align-items: flex-end; gap: 10px; justify-content: center; margin-top: 10px; }
+.seats-set .inline { display: flex; flex-direction: column; gap: 5px; font-size: 0.8rem; color: var(--latte); }
+.seats-set input { width: 90px; background: rgba(255,253,249,0.06); border: 1px solid rgba(201,164,122,0.3); border-radius: 10px; padding: 9px 11px; color: var(--cream); }
 .seats-updated { text-align: center; color: var(--latte); font-size: 0.85rem; margin-top: 14px; min-height: 1.1em; }
 .seats-updated.ok { color: #7bd88f; }
 .seats-updated.err { color: #ff9d8a; }

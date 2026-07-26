@@ -26,18 +26,9 @@
     STORE.readSeats().then(function (r) { render(r.data); }).catch(function () {});
   }
 
-  // Keep the admin link absolute so it always points at the genuine admin.
-  var link = document.getElementById('mirrorLink');
-  if (link) {
-    try {
-      var base = new URL('admin.html', window.location.href);
-      link.href = base.href;
-    } catch (e) { /* keep relative fallback */ }
-  }
-
   refresh();
-  // Refresh soon after the tab regains focus, so a decrement the owner just
-  // made in the admin shows on the public site with minimal delay.
+  // Refresh soon after the tab regains focus, so a change shows on the public
+  // site with minimal delay.
   window.addEventListener('focus', function () { refresh(); });
   window.addEventListener('pageshow', function () { refresh(); });
   setInterval(refresh, 15000);
